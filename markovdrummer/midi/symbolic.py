@@ -1,22 +1,26 @@
 from __future__ import absolute_import # to allow for import from midi (the external library)
 
+from math import ceil
+
 import midi
+
+from ..midi.utils import track2eventdict, eventdict2track, is_noteon
 
 def events2pitch( events ):
    return tuple( sorted(
       map( lambda _: _.data[ 0 ], filter( is_noteon, events ) )
    ) )
 
-def sym2track( cartesian, tick, tick_off = None ):
+def sym2track( sym, tick, tick_off = None ):
    if tick_off is None: tick_off = tick / 4
-   dd = dict()
-   for n, beat in enumerate( cartesian ):
+   eventdict = dict()
+   for n, beat in enumerate( sym ):
       print n, beat
       events_at_tick = []
       for note in beat:
          events_at_tick.append( midi.NoteOnEvent( tick = 0, channel = 9, data = [ note, 64 ] ) )
-      if events_at_tick: dd[ n * tick ] = events_at_tick
-   return midi.Track( PIPPO( dd, tick_off ) )
+      if events_at_tick: eventdict[ n * tick ] = events_at_tick
+   return midi.Track( eventdict2track( eventdict, tick_off ) )
 
 def track2sym( track, quantize_resolution ):
 
@@ -65,23 +69,23 @@ def track2sym( track, quantize_resolution ):
 </html>
 """
 
-def explain( cartesians ):
-   def _explain( cartesian ):
+def explain( syms ):
+   def _explain( sym ):
       notes = set()
-      for beat in cartesian:
+      for beat in sym:
          notes.update( beat )
       notes = sorted( notes, reverse = True )
       table = [ '<table>' ]
       table.append( ''.join(
-         [ '<th>&nbsp;' ] + [ '<th>{}'.format( n ) for n, beat in enumerate( cartesian, 1 ) ]
+         [ '<th>&nbsp;' ] + [ '<th>{}'.format( n ) for n, beat in enumerate( sym, 1 ) ]
       ) )
       for note in notes:
          table.append( ''.join(
             [ '<tr><th>{}'.format( GM10_PITCH_TO_DURMPART[ note ] if note in GM10_PITCH_TO_DURMPART else note ) ]
-            + [ '<td class=on>&nbsp;' if note in beat else '<td>&nbsp;' for beat in cartesian ]
+            + [ '<td class=on>&nbsp;' if note in beat else '<td>&nbsp;' for beat in sym ]
           ) )
       table.append( '</table>' )
       return '\n'.join( table )
-   return TABLE_HTML.format( ' \n '.join( [ _explain( _ ) for _ in cartesians ] ) )
+   return TABLE_HTML.format( ' \n '.join( [ _explain( _ ) for _ in syms ] ) )
 
 

@@ -46,18 +46,18 @@ def eventdict2track( eventdict, tick_off ):
          filter( is_noteon, events )
       )
 
-   events = []
+   tevents = []
    last_tick = 0
    for tick, events in sorted( eventdict.items() ):
       on = add_events( events, tick - last_tick )
-      events.extend( on )
+      tevents.extend( on )
       last_tick = tick
       off = _to_off( on )
       if off:
-         events.extend( add_events( off, tick_off ) )
+         tevents.extend( add_events( off, tick_off ) )
          last_tick += tick_off
 
-   return midi.Track( events )
+   return midi.Track( tevents )
 
 
 def quantize( track, quantize_resolution ):
