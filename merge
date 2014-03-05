@@ -1,0 +1,16 @@
+#!/usr/bin/env python
+
+from pprint import PrettyPrinter
+from pickle import loads, dumps
+from sys import argv
+
+pp = PrettyPrinter( indent = 4 ).pprint
+
+if __name__ == '__main__':
+	merged = dict()
+	for filename in argv[ 1 : ]:
+		with open( filename ) as f: model = loads( f.read() )
+		for k, v in model.items():
+			merged.setdefault( k, [] ).extend( v )
+	with open( 'merged.model', 'w' ) as f: f.write( dumps( merged ) )
+	pp( merged )

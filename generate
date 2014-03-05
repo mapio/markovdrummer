@@ -1,0 +1,27 @@
+#!/usr/bin/env python
+
+from sys import argv
+
+from pickle import loads
+
+from markovdrummer.midi import beats2track, beats2table, writetables
+from markovdrummer.markov import generate
+
+import midi
+
+if __name__ == '__main__':
+
+	filename = argv[ 1 ].split( '.' )[ 0 ]
+	max_beats = int( argv[ 2 ] )
+	tick = int( argv[ 3 ] )
+
+	with open( filename + '.model' ) as f: model = loads( f.read() )
+
+	beats = generate( model, max_beats )
+
+	midi.write_midifile(
+		filename + '-g.mid',
+		midi.Pattern( format = 0, resolution = 240, tracks = [ beats2track( beats, tick ) ] )
+	)
+
+	writetables( [ beats2table( beats ) ], filename + '-g.html' )

@@ -1,0 +1,3 @@
+#!/bin/bash
+
+fluidsynth -g 3 -i ./local/fluidsynth/generaluser_gs_fluidsynth_v1.44.sf2 "$1" >/dev/null
