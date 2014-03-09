@@ -89,3 +89,22 @@ def beats2table( beats ):
 		) )
 	table.append( '</table>' )
 	return '\n'.join( table )
+
+def model2tables( model ):
+	def _t( ngram, nexts ):
+		table = [ '<table>' ]
+		table.append( ''.join(
+			[ '<th>&nbsp;<th colspan={}>ngram'.format( len( ngram ) ) ] + [ '<th>{}'.format( n ) for n in range( 1, len( nexts ) + 1 ) ]
+		) )
+		for pitch in beats2pitches( ngram + tuple( nexts ) ):
+			table.append( ''.join(
+					[ '<tr><th>{}'.format( GM10_PITCH_TO_DURMPART[ pitch ] if pitch in GM10_PITCH_TO_DURMPART else pitch ) ]
+					+ [ '<td class=on>&nbsp;' if pitch in beat else '<td>&nbsp;' for beat in ngram ]
+					+ [ '<td class=on>&nbsp;' if pitch in beat else '<td>&nbsp;' for beat in nexts ]
+			) )
+		table.append( '</table>' )
+		return '\n'.join( table )
+	tables = []
+	for ngram, nexts in model.items():
+		tables.append( _t( ngram, nexts ) )
+	return '\n'.join( tables )
