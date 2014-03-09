@@ -8,9 +8,9 @@ from ..midi.utils import track2eventdict, eventdict2track, is_noteon
 from ..midi.constants import GM10_PITCH_TO_DURMPART
 
 def events2beat( events ):
-	return tuple( sorted(
+	return tuple( sorted( set(
 		map( lambda _: _.data[ 0 ], filter( is_noteon, events ) )
-	) )
+	) ) )
 
 def beat2events( beat ):
 	return [ midi.NoteOnEvent( tick = 0, channel = 9, data = [ pitch, 64 ] ) for pitch in beat ]
