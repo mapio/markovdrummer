@@ -17,7 +17,17 @@ def must_keep( event ):
    )
 
 def clean( track ):
-   return midi.Track( filter( must_keep, track ) )
+   events = []
+   cum_tick = 0
+   for event in track:
+      print( cum_tick, event )
+      if must_keep( event ):
+         event.tick += cum_tick
+         cum_tick = 0
+         events.append( event )
+      else:
+         cum_tick += event.tick
+   return midi.Track( events )
 
 def track2eventdict( track ):
    eventdict = dict()
