@@ -70,17 +70,14 @@ def eventdict2track( eventdict, tick_off ):
    return midi.Track( tevents )
 
 
-def quantize( track, quantize_resolution ):
-
-   t2ed = track2eventdict( track )
-   sorted_ticks = sorted( t2ed.keys() )
-   tick_per_quantum = sorted_ticks[ -1 ] / quantize_resolution
+def quantize( track, tick_per_quantum ):
 
    def _qt( tick ):
       return int( floor( 0.5 + ( 0.0 + tick ) / tick_per_quantum ) * tick_per_quantum )
 
+   t2ed = track2eventdict( track )
    qtrack2eventdict = dict()
-   for tick in sorted_ticks:
+   for tick in sorted( t2ed.keys() ):
       qtrack2eventdict.setdefault( _qt( tick ), [] ).extend( t2ed[ tick ] )
 
    return eventdict2track( qtrack2eventdict, tick_per_quantum / 4 )

@@ -23,12 +23,10 @@ def beats2track( beats, tick, tick_off = None ):
 		if events_at_tick: eventdict[ n * tick ] = events_at_tick
 	return midi.Track( eventdict2track( eventdict, tick_off ) )
 
-def track2beats( track, quantize_resolution ):
+def track2beats( track, tick_per_quantum ):
 
 	t2ed = track2eventdict( track )
-	tick_per_quantum = max( t2ed.keys() ) / quantize_resolution
 	res = []
-
 	last_beat = 0
 	for tick, events in sorted( t2ed.items() ):
 		beat = int( ceil( tick / tick_per_quantum ) )

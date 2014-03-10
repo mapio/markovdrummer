@@ -18,6 +18,7 @@ if __name__ == '__main__':
 	original = midi.read_midifile( filename + '.mid' )
 
 	track = clean( original[ 1 ] if original.format == 1 else original[ 0 ] )
+	quantize_resoluzion = original.resolution / quantize_resoluzion
 	qtrack = quantize( track, quantize_resoluzion )
 	beats = track2beats( qtrack, quantize_resoluzion )
 	model = analyze( beats, memory )
