@@ -1,0 +1,28 @@
+#!/usr/bin/env python
+
+from sys import argv
+
+from pickle import dumps
+
+from markovdrummer.midi import clean, quantize, track2beats, beats2track, beats2table, writetables
+from markovdrummer.markov import analyze, save
+
+import midi
+
+if __name__ == '__main__':
+
+	filename = argv[ 1 ].split( '.' )[ 0 ]
+	tick_per_quantum = int( argv[ 2 ] )
+	memory = int( argv[ 3 ] )
+
+	original = midi.read_midifile( filename + '.mid' )
+
+	track = original[ 1 ] if original.format == 1 else original[ 0 ]
+
+	beats = track2beats( track, tick_per_quantum )
+	print beats
+
+	model = analyze( beats, memory )
+
+	save( model, filename + '.model' )
+	writetables( [ beats2table( beats ) ], filename + '.html' )

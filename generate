@@ -2,10 +2,8 @@
 
 from sys import argv
 
-from pickle import loads
-
 from markovdrummer.midi import beats2track, beats2table, writetables
-from markovdrummer.markov import generate
+from markovdrummer.markov import generate, load
 
 import midi
 
@@ -13,15 +11,16 @@ if __name__ == '__main__':
 
 	filename = argv[ 1 ].split( '.' )[ 0 ]
 	max_beats = int( argv[ 2 ] )
-	tick = int( argv[ 3 ] )
+	tick_per_quantum = int( argv[ 3 ] )
+	resolution = int( argv[ 4 ] )
 
-	with open( filename + '.model' ) as f: model = loads( f.read() )
+	model = load( filename + '.model' )
 
 	beats = generate( model, max_beats )
 
 	midi.write_midifile(
 		filename + '-g.mid',
-		midi.Pattern( format = 0, resolution = 240, tracks = [ beats2track( beats, tick ) ] )
+		midi.Pattern( format = 0, resolution = resolution, tracks = [ beats2track( beats, tick_per_quantum ) ] )
 	)
 
 	writetables( [ beats2table( beats ) ], filename + '-g.html' )

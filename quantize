@@ -1,0 +1,27 @@
+#!/usr/bin/env python
+
+from sys import argv
+
+import midi
+
+from markovdrummer.midi import clean, quantize
+
+if __name__ == '__main__':
+
+	filename = argv[ 1 ].split( '.' )[ 0 ]
+	tick_per_quantum = int( argv[ 2 ] )
+
+	original = midi.read_midifile( filename + '.mid' )
+
+	track = clean( original[ 1 ] if original.format == 1 else original[ 0 ] )
+	qstats, qtrack = quantize( track, tick_per_quantum )
+
+	qmidi = midi.Pattern(
+		format = original.format,
+		resolution = original.resolution,
+		tracks =  [ original[ 0 ], qtrack ] if original.format == 1 else [ qtrack ]
+	)
+	midi.write_midifile( filename + '-q.mid', qmidi )
+
+	for delta, count in sorted( qstats.items() ):
+		print delta, count

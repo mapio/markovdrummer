@@ -1,3 +1,4 @@
+from pickle import loads, dumps
 from random import choice
 
 def analyze( lst, n = 2 ):
@@ -17,3 +18,9 @@ def generate( model, max_beats ):
 		ngram = ngram[ 1 : ] + ( nxt, )
 		res.append( nxt )
 	return res
+
+def load( path ):
+	with open( path ) as f: return loads( f.read() )
+
+def save( model, path ):
+	with open( path, 'w' ) as f: f.write( dumps( model ) )

@@ -1,5 +1,6 @@
 from __future__ import absolute_import # to allow for import from midi (the external library)
 
+from collections import Counter
 from math import floor, ceil
 import midi
 
@@ -20,7 +21,6 @@ def clean( track ):
    events = []
    cum_tick = 0
    for event in track:
-      print( cum_tick, event )
       if must_keep( event ):
          event.tick += cum_tick
          cum_tick = 0
@@ -28,6 +28,15 @@ def clean( track ):
       else:
          cum_tick += event.tick
    return midi.Track( events )
+
+def eventdictstats( eventdict ):
+   deltas = []
+   sorted_ticks = sorted( eventdict.keys() )
+   cur_tick = sorted_ticks.pop( 0 )
+   for tick in sorted_ticks:
+      deltas.append( tick - cur_tick )
+      cur_tick = tick
+   return Counter( deltas )
 
 def track2eventdict( track ):
    eventdict = dict()
@@ -80,4 +89,4 @@ def quantize( track, tick_per_quantum ):
    for tick in sorted( t2ed.keys() ):
       qtrack2eventdict.setdefault( _qt( tick ), [] ).extend( t2ed[ tick ] )
 
-   return eventdict2track( qtrack2eventdict, tick_per_quantum / 4 )
+   return eventdictstats( qtrack2eventdict ), eventdict2track( qtrack2eventdict, tick_per_quantum / 4 )

@@ -1,5 +1,7 @@
 from __future__ import absolute_import # to allow for import from midi (the external library)
 
+from pprint import PrettyPrinter; pp = PrettyPrinter( indent = 4 ).pprint
+
 from math import ceil
 
 import midi
@@ -21,21 +23,22 @@ def beats2track( beats, tick, tick_off = None ):
 	for n, beat in enumerate( beats ):
 		events_at_tick = beat2events( beat )
 		if events_at_tick: eventdict[ n * tick ] = events_at_tick
-	return midi.Track( eventdict2track( eventdict, tick_off ) )
+	tmp = eventdict2track( eventdict, tick_off )
+	return midi.Track( tmp )
 
 def track2beats( track, tick_per_quantum ):
 
 	t2ed = track2eventdict( track )
-	res = []
+	beats = []
 	last_beat = 0
 	for tick, events in sorted( t2ed.items() ):
-		beat = int( ceil( tick / tick_per_quantum ) )
+		beat = tick / tick_per_quantum
 		delta = beat - last_beat - 1
-		if delta: res.extend( [ tuple() ] * delta )
-		res.append( events2beat( events ) )
+		if delta: beats.extend( [ tuple() ] * delta )
+		events = events2beat( events )
+		if events: beats.append( events )
 		last_beat = beat
-
-	return res
+	return beats
 
 def writetables( tables, path ):
 	TABLE_HTML = """
@@ -78,7 +81,7 @@ def beats2pitches( beats ):
 def beats2table( beats ):
 	table = [ '<table>' ]
 	table.append( ''.join(
-		[ '<th>&nbsp;' ] + [ '<th>{}'.format( n ) for n in range( 1, len( beats ) + 1 ) ]
+		[ '<th>&nbsp;' ] + [ '<th>{:02}'.format( n ) for n in range( 1, len( beats ) + 1 ) ]
 	) )
 	for pitch in beats2pitches( beats ):
 		table.append( ''.join(
