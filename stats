@@ -1,0 +1,23 @@
+#!/usr/bin/env python
+
+from sys import argv
+
+import midi
+
+from markovdrummer.midi import quantize, trackstats, pitch2part
+
+if __name__ == '__main__':
+
+	filename = argv[ 1 ]
+
+	original = midi.read_midifile( filename )
+	track = original[ 0 ]
+
+	qstats, _ = quantize( track )
+	print 'qstats:'
+	for delta, count in qstats:
+		print '\ttick {}: # {}'.format( delta, count )
+
+	print 'pitches:'
+	for pitch, count in trackstats( track ):
+		print '\tpitch {}: # {}'.format( pitch2part( pitch ), count )

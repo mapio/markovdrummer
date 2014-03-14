@@ -1,3 +1,5 @@
 #!/bin/bash
 
-fluidsynth -g 3 -i ./local/fluidsynth/generaluser_gs_fluidsynth_v1.44.sf2 "$1" >/dev/null
+basedir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+fluidsynth -g 3 -i "$basedir/local/fluidsynth/generaluser_gs_fluidsynth_v1.44.sf2" "$1" >/dev/null

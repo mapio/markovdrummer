@@ -7,7 +7,7 @@ from math import ceil
 import midi
 
 from ..midi.utils import track2eventdict, eventdict2track, is_noteon
-from ..midi.constants import GM10_PITCH_TO_DURMPART
+from ..midi.constants import pitch2part
 
 def events2beat( events ):
 	return tuple( sorted( set(
@@ -85,7 +85,7 @@ def beats2table( beats ):
 	) )
 	for pitch in beats2pitches( beats ):
 		table.append( ''.join(
-				[ '<tr><th>{} ({})'.format( GM10_PITCH_TO_DURMPART[ pitch ] if pitch in GM10_PITCH_TO_DURMPART else '', pitch ) ]
+				[ '<tr><th>' + pitch2part( pitch ) ]
 				+ [ '<td class=on>&nbsp;' if pitch in beat else '<td>&nbsp;' for beat in beats ]
 		) )
 	table.append( '</table>' )
@@ -99,7 +99,7 @@ def model2tables( model ):
 		) )
 		for pitch in beats2pitches( ngram + tuple( nexts ) ):
 			table.append( ''.join(
-					[ '<tr><th>{}'.format( GM10_PITCH_TO_DURMPART[ pitch ] if pitch in GM10_PITCH_TO_DURMPART else pitch ) ]
+					[ '<tr><th>' + pitch2part( pitch ) ]
 					+ [ '<td class=on>&nbsp;' if pitch in beat else '<td>&nbsp;' for beat in ngram ]
 					+ [ '<td class=on>&nbsp;' if pitch in beat else '<td>&nbsp;' for beat in nexts ]
 			) )

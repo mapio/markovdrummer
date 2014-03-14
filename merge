@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-from pprint import PrettyPrinter
-from pickle import loads, dumps
 from sys import argv
 
 from markovdrummer.midi import model2tables, writetables

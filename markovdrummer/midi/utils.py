@@ -39,6 +39,9 @@ def clean( track ):
          cum_tick += event.tick
    return midi.Track( events )
 
+def trackstats( track ):
+   return sorted( Counter( map( lambda _: _.data[ 0 ], filter( is_noteon, track ) ) ).items() )
+
 def eventdictstats( eventdict ):
    deltas = []
    sorted_ticks = sorted( eventdict.keys() )
@@ -46,7 +49,7 @@ def eventdictstats( eventdict ):
    for tick in sorted_ticks:
       deltas.append( tick - cur_tick )
       cur_tick = tick
-   return Counter( deltas )
+   return sorted( Counter( deltas ).items() )
 
 def track2eventdict( track ):
    eventdict = dict()

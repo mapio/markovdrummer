@@ -1,6 +1,9 @@
 # -*- coding: utf8 -*-
 
 GM10_PITCH_TO_DURMPART = {
+   22: '[Roland Closed Hi-hat]',
+   23: '[Roland mute]',
+   26: '[Roland Open Hi-hat]',
    35: 'Bass Drum 2',
    36: 'Bass Drum 1',
    37: 'Side Stick/Rimshot',
@@ -49,3 +52,9 @@ GM10_PITCH_TO_DURMPART = {
    80: 'Mute Triangle',
    81: 'Open Triangle',
 }
+
+def pitch2part( pitch ):
+   if pitch in GM10_PITCH_TO_DURMPART:
+      return '{} ({})'.format( GM10_PITCH_TO_DURMPART[ pitch ], pitch )
+   else:
+      return '{}'.format( pitch )

@@ -1,0 +1,24 @@
+#!/usr/bin/env python
+
+from sys import argv
+
+import midi
+
+from markovdrummer import filebaseext
+from markovdrummer.midi import clean, remap, quantize
+
+if __name__ == '__main__':
+
+	filename, basename, _ = filebaseext( argv[ 1 ] )
+
+	original = midi.read_midifile( filename )
+	track = original[ 0 ] if original.format == 0 else original[ 1 ]
+
+	ptrack = remap( clean( track ),
+		{
+			40:0,
+			26:46
+		}
+	)
+
+	midi.write_midifile( basename + '.p.mid', midi.Pattern( format = 0, resolution = original.resolution, tracks = [ ptrack ] ) )

@@ -1,27 +1,28 @@
 #!/usr/bin/env python
 
-from os.path import basename, splitext, dirname
 from sys import argv
-
-from markovdrummer.midi import beats2track, beats2table, writetables
-from markovdrummer.markov import generate, load
 
 import midi
 
+from markovdrummer import filebaseext
+from markovdrummer.markov import generate, load
+from markovdrummer.midi import beats2track
+
 if __name__ == '__main__':
 
-	directory = dirname( argv[ 1 ] )
-	filename, ext = splitext( basename( argv[ 1 ] ) )
+	filename, basename, _ = filebaseext( argv[ 1 ] )
+
+	filename = argv[ 1 ]
+	basename, _ = splitext( basename( argv[ 1 ] ) )
 	num_beats = int( argv[ 2 ] )
 	tick_per_quantum = int( argv[ 3 ] )
 	resolution = int( argv[ 4 ] )
 
-	model = load( argv[ 1 ] )
+	model = load( filename )
 	beats = generate( model, num_beats )
 	track = beats2track( beats, tick_per_quantum )
 
-	basename = '{}/m{}-b{}-t{}-r{}'.format( directory, filename, num_beats, tick_per_quantum, resolution )
-
-	midi.write_midifile( basename + '.mid', midi.Pattern( format = 0, resolution = resolution, tracks = [ track ] ) )
-
-	writetables( [ beats2table( beats ) ], basename + '.html' )
+	midi.write_midifile(
+		'{}.b{}-t{}-r{}.mid'.format( basename, num_beats, tick_per_quantum, resolution ),
+		midi.Pattern( format = 0, resolution = resolution, tracks = [ track ] )
+	)
