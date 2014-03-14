@@ -4,7 +4,7 @@ from sys import argv
 
 import midi
 
-from markovdrummer.midi import clean, quantize
+from markovdrummer.midi import clean, remap, quantize, writetables, beats2table, track2beats
 
 if __name__ == '__main__':
 
@@ -14,6 +14,12 @@ if __name__ == '__main__':
 	original = midi.read_midifile( filename + '.mid' )
 
 	track = clean( original[ 1 ] if original.format == 1 else original[ 0 ] )
+	track = remap( track,
+		{
+			40:0,
+			26:46
+		}
+	)
 	qstats, qtrack = quantize( track, tick_per_quantum )
 
 	qmidi = midi.Pattern(
@@ -22,6 +28,8 @@ if __name__ == '__main__':
 		tracks =  [ original[ 0 ], qtrack ] if original.format == 1 else [ qtrack ]
 	)
 	midi.write_midifile( filename + '-q.mid', qmidi )
+
+	writetables( [ beats2table( track2beats( qtrack, tick_per_quantum ) ) ], filename + '-q-beats.html' )
 
 	for delta, count in sorted( qstats.items() ):
 		print delta, count

@@ -1,28 +1,36 @@
 #!/usr/bin/env python
 
+from os import mkdir
+from os.path import basename, splitext
 from sys import argv
 
 from pickle import dumps
 
-from markovdrummer.midi import clean, quantize, track2beats, beats2track, beats2table, writetables
+from markovdrummer.midi import clean, quantize, track2beats, beats2track, beats2table, writetables, model2tables
 from markovdrummer.markov import analyze, save
 
 import midi
 
 if __name__ == '__main__':
 
-	filename = argv[ 1 ].split( '.' )[ 0 ]
+	filename, ext = splitext( basename( argv[ 1 ] ) )
 	tick_per_quantum = int( argv[ 2 ] )
 	memory = int( argv[ 3 ] )
 
-	original = midi.read_midifile( filename + '.mid' )
+	original = midi.read_midifile( argv[ 1 ] )
 
 	track = original[ 1 ] if original.format == 1 else original[ 0 ]
-
 	beats = track2beats( track, tick_per_quantum )
-	print beats
-
 	model = analyze( beats, memory )
 
-	save( model, filename + '.model' )
-	writetables( [ beats2table( beats ) ], filename + '.html' )
+	try:
+		mkdir( filename )
+	except OSError:
+		pass
+
+	basename = '{}/t{}-m{}'.format( filename, tick_per_quantum, memory )
+
+	save( model, basename + '.model' )
+	writetables( [ beats2table( beats ) ], basename + '-beats.html' )
+	writetables( [ model2tables( model ) ], basename + '-model.html' )
+

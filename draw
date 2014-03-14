@@ -1,0 +1,25 @@
+#!/usr/bin/env python
+
+from sys import argv
+from os.path import splitext
+
+import midi
+
+from markovdrummer.midi import quantize, track2beats, beats2table, model2tables, writetables
+from markovdrummer.markov import load
+
+if __name__ == '__main__':
+
+	filename = argv[ 1 ]
+	_, ext = splitext( filename )
+
+	if ext == '.mid':
+		original = midi.read_midifile( filename )
+		track = original[ 0 ] if original.format == 0 else original[ 1 ]
+		qstats, _ = quantize( track )
+		tick_per_quantum = min( qstats.keys() )
+		print 'tick_per_quantum = {} '.format( tick_per_quantum )
+		writetables( [ beats2table( track2beats( track, tick_per_quantum ) ) ], filename + '.html' )
+	elif ext == '.model':
+		model = load( filename )
+		writetables( model2tables( model ), filename + '.html' )

@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from os.path import basename, splitext, dirname
 from sys import argv
 
 from markovdrummer.midi import beats2track, beats2table, writetables
@@ -9,18 +10,18 @@ import midi
 
 if __name__ == '__main__':
 
-	filename = argv[ 1 ].split( '.' )[ 0 ]
-	max_beats = int( argv[ 2 ] )
+	directory = dirname( argv[ 1 ] )
+	filename, ext = splitext( basename( argv[ 1 ] ) )
+	num_beats = int( argv[ 2 ] )
 	tick_per_quantum = int( argv[ 3 ] )
 	resolution = int( argv[ 4 ] )
 
-	model = load( filename + '.model' )
+	model = load( argv[ 1 ] )
+	beats = generate( model, num_beats )
+	track = beats2track( beats, tick_per_quantum )
 
-	beats = generate( model, max_beats )
+	basename = '{}/m{}-b{}-t{}-r{}'.format( directory, filename, num_beats, tick_per_quantum, resolution )
 
-	midi.write_midifile(
-		filename + '-g.mid',
-		midi.Pattern( format = 0, resolution = resolution, tracks = [ beats2track( beats, tick_per_quantum ) ] )
-	)
+	midi.write_midifile( basename + '.mid', midi.Pattern( format = 0, resolution = resolution, tracks = [ track ] ) )
 
-	writetables( [ beats2table( beats ) ], filename + '-g.html' )
+	writetables( [ beats2table( beats ) ], basename + '.html' )

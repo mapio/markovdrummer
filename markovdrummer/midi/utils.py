@@ -17,6 +17,16 @@ def must_keep( event ):
       isinstance( event, midi.EndOfTrackEvent )
    )
 
+def remap( track, transtable ):
+   res = []
+   for event in track:
+      if ( is_noteon( event ) or is_noteoff( event ) ) and event.data[ 0 ] in transtable:
+         new = transtable[ event.data[ 0 ] ]
+         if new == 0: continue
+         event.data[ 0 ] = new
+      res.append( event )
+   return res
+
 def clean( track ):
    events = []
    cum_tick = 0
@@ -79,7 +89,7 @@ def eventdict2track( eventdict, tick_off ):
    return midi.Track( tevents )
 
 
-def quantize( track, tick_per_quantum ):
+def quantize( track, tick_per_quantum = 1 ):
 
    def _qt( tick ):
       return int( floor( 0.5 + ( 0.0 + tick ) / tick_per_quantum ) * tick_per_quantum )

@@ -9,15 +9,16 @@ def analyze( lst, n = 2 ):
 		ngram = ngram[ 1 : ] + ( nxt, )
 	return model
 
-def generate( model, max_beats ):
-	ngram = choice( list( model.keys() ) )
+def generate( model, num_beats ):
 	res = []
-	res.extend( ngram )
-	while ngram in model and len( res ) < max_beats:
-		nxt = choice( model[ ngram ] )
-		ngram = ngram[ 1 : ] + ( nxt, )
-		res.append( nxt )
-	return res
+	while True:
+		ngram = choice( list( model.keys() ) )
+		res.extend( ngram )
+		while ngram in model:
+			nxt = choice( model[ ngram ] )
+			ngram = ngram[ 1 : ] + ( nxt, )
+			res.append( nxt )
+			if len( res ) >= num_beats: return res
 
 def load( path ):
 	with open( path ) as f: return loads( f.read() )

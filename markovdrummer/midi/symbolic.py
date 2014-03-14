@@ -85,7 +85,7 @@ def beats2table( beats ):
 	) )
 	for pitch in beats2pitches( beats ):
 		table.append( ''.join(
-				[ '<tr><th>{}'.format( GM10_PITCH_TO_DURMPART[ pitch ] if pitch in GM10_PITCH_TO_DURMPART else pitch ) ]
+				[ '<tr><th>{} ({})'.format( GM10_PITCH_TO_DURMPART[ pitch ] if pitch in GM10_PITCH_TO_DURMPART else '', pitch ) ]
 				+ [ '<td class=on>&nbsp;' if pitch in beat else '<td>&nbsp;' for beat in beats ]
 		) )
 	table.append( '</table>' )
@@ -108,4 +108,4 @@ def model2tables( model ):
 	tables = []
 	for ngram, nexts in model.items():
 		tables.append( _t( ngram, nexts ) )
-	return '\n'.join( tables )
+	return tables
