@@ -11,13 +11,16 @@ if __name__ == '__main__':
 	filename = argv[ 1 ]
 
 	original = midi.read_midifile( filename )
-	track = original[ 0 ]
 
-	qstats, _ = quantize( track )
-	print 'qstats:'
-	for delta, count in qstats:
-		print '\ttick {}: # {}'.format( delta, count )
+	print 'format: {}\nresolution: {}'.format( original.format, original.resolution )
 
-	print 'pitches:'
-	for pitch, count in trackstats( track ):
-		print '\tpitch {}: # {}'.format( pitch2part( pitch ), count )
+	for n, track in enumerate( original ):
+
+		qstats, _ = quantize( track )
+		print 'track #{} qstats:'.format( n )
+		for delta, count in qstats:
+			print '\ttick {}: # {}'.format( delta, count )
+
+		print 'track #{} pitches:'.format( n )
+		for pitch, count in trackstats( track ):
+			print '\tpitch {}: # {}'.format( pitch2part( pitch ), count )
