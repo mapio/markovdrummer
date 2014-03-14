@@ -15,7 +15,7 @@ def events2beat( events ):
 	) ) )
 
 def beat2events( beat ):
-	return [ midi.NoteOnEvent( tick = 0, channel = 9, data = [ pitch, 64 ] ) for pitch in beat ]
+	return [ midi.NoteOnEvent( tick = 0, channel = 9, data = [ pitch, 120 ] ) for pitch in beat ]
 
 def beats2track( beats, tick, tick_off = None ):
 	if tick_off is None: tick_off = tick / 4
@@ -47,12 +47,16 @@ def writetables( tables, path ):
 	   <meta charset="utf-8">
 	  <title>Explain</title>
 	  <style>
+	  	table {{
+	  		  margin: 1em;
+		}}
 		table, td, th {{
 		  border: 1pt solid black;
 		  border-collapse: collapse;
-		  margin: 1em;
 		}}
 		td {{
+		  min-width: 1em;
+  		  max-width: 1em;
 		  width: 1em;
 		}}
 		.nob {{
@@ -62,6 +66,7 @@ def writetables( tables, path ):
 		  background-color: green;
 		}}
 		th {{
+		  white-space: nowrap;
 		  text-align: left;
 		}}
 	  </style>
@@ -80,9 +85,12 @@ def beats2pitches( beats ):
 
 def beats2table( beats ):
 	table = [ '<table>' ]
-	table.append( ''.join(
-		[ '<th>&nbsp;' ] + [ '<th>{:02}'.format( n ) for n in range( 1, len( beats ) + 1 ) ]
-	) )
+	if len( beats ) < 10:
+		table.append( ''.join(
+			[ '<th>&nbsp;' ] + [ '<th>{:02}'.format( n ) for n in range( 1, len( beats ) + 1 ) ]
+		) )
+	else:
+		table.append( ''.join( [ '<th>&nbsp;' ] * ( len( beats ) + 1 ) ) )
 	for pitch in beats2pitches( beats ):
 		table.append( ''.join(
 				[ '<tr><th>' + pitch2part( pitch ) ]
@@ -92,12 +100,12 @@ def beats2table( beats ):
 	return '\n'.join( table )
 
 def model2tables( model ):
-	def _t( ngram, nexts ):
+	def _t( ngram, nexts, pitches ):
 		table = [ '<table>' ]
 		table.append( ''.join(
-			[ '<th>&nbsp;<th colspan={}>ngram'.format( len( ngram ) ) ] + [ '<th>{}'.format( n ) for n in range( 1, len( nexts ) + 1 ) ]
+			[ '<th>&nbsp;<th colspan={}>ngram'.format( len( ngram ) ) ] + [ '<th>&nbsp;' ] * len( nexts )
 		) )
-		for pitch in beats2pitches( ngram + tuple( nexts ) ):
+		for pitch in pitches:
 			table.append( ''.join(
 					[ '<tr><th>' + pitch2part( pitch ) ]
 					+ [ '<td class=on>&nbsp;' if pitch in beat else '<td>&nbsp;' for beat in ngram ]
@@ -105,7 +113,11 @@ def model2tables( model ):
 			) )
 		table.append( '</table>' )
 		return '\n'.join( table )
+	pitches = set()
+	for ngram, nexts in model.items():
+		pitches.update( beats2pitches( ngram + tuple( nexts ) ) )
+	pitches = sorted( pitches, reverse = True )
 	tables = []
 	for ngram, nexts in model.items():
-		tables.append( _t( ngram, nexts ) )
+		tables.append( _t( ngram, nexts, pitches ) )
 	return tables

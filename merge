@@ -2,16 +2,16 @@
 
 from sys import argv
 
-from markovdrummer.midi import model2tables, writetables
-
-pp = PrettyPrinter( indent = 4 ).pprint
+from markovdrummer import filebaseext
+from markovdrummer.markov import load, save
 
 if __name__ == '__main__':
 	merged = dict()
+	basenames = []
 	for filename in argv[ 1 : ]:
-		with open( filename ) as f: model = loads( f.read() )
+		filename, basename, _ = filebaseext( filename )
+		basenames.append( basename )
+		model = load( filename )
 		for k, v in model.items():
 			merged.setdefault( k, [] ).extend( v )
-	with open( 'merged.model', 'w' ) as f: f.write( dumps( merged ) )
-	pp( merged )
-	writetables( [ model2tables( model ) ], 'merged.html' )
+	save( merged, '-'.join( basenames ) + '.model' )

@@ -10,8 +10,7 @@ from markovdrummer.midi import track2beats
 
 if __name__ == '__main__':
 
-	filename = argv[ 1 ]
-	basename, _ = splitext( basename( filename ) )
+	filename, basename, _ = filebaseext( argv[ 1 ] )
 	tick_per_quantum = int( argv[ 2 ] )
 	memory = int( argv[ 3 ] )
 

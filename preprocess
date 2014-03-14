@@ -14,10 +14,8 @@ if __name__ == '__main__':
 	original = midi.read_midifile( filename )
 	track = original[ 0 ] if original.format == 0 else original[ 1 ]
 
-	ptrack = remap( clean( track ),
-		{
-			40:0,
-			26:46
+	ptrack = remap( clean( track, set( [ 40, 23 ] ) ), {
+			26:46,
 		}
 	)
 

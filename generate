@@ -11,9 +11,6 @@ from markovdrummer.midi import beats2track
 if __name__ == '__main__':
 
 	filename, basename, _ = filebaseext( argv[ 1 ] )
-
-	filename = argv[ 1 ]
-	basename, _ = splitext( basename( argv[ 1 ] ) )
 	num_beats = int( argv[ 2 ] )
 	tick_per_quantum = int( argv[ 3 ] )
 	resolution = int( argv[ 4 ] )

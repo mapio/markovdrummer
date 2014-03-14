@@ -20,18 +20,17 @@ def must_keep( event ):
 def remap( track, transtable ):
    res = []
    for event in track:
+      if not isinstance( event, midi.MetaEvent ): event = event.copy()
       if ( is_noteon( event ) or is_noteoff( event ) ) and event.data[ 0 ] in transtable:
-         new = transtable[ event.data[ 0 ] ]
-         if new == 0: continue
-         event.data[ 0 ] = new
+         event.data[ 0 ] = transtable[ event.data[ 0 ] ]
       res.append( event )
    return res
 
-def clean( track ):
+def clean( track, to_del = set() ):
    events = []
    cum_tick = 0
    for event in track:
-      if must_keep( event ):
+      if must_keep( event ) and not ( ( is_noteon( event ) or is_noteoff( event ) ) and event.data[ 0 ] in to_del ):
          event.tick += cum_tick
          cum_tick = 0
          events.append( event )
