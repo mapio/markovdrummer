@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env python
 
 # Copyright 2014 Massimo Santini, Raffaella Migliaccio
 #
@@ -17,6 +17,19 @@
 # You should have received a copy of the GNU General Public License
 # along with MarkovDrummer.  If not, see <http://www.gnu.org/licenses/>.
 
-basedir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+from sys import argv
 
-fluidsynth -g 3 -i "$basedir/local/fluidsynth/generaluser_gs_fluidsynth_v1.44.sf2" "$1" >/dev/null
+from markovdrummer import filebaseext
+from markovdrummer.markov import load, save
+
+def main():
+
+	merged = dict()
+	basenames = []
+	for filename in argv[ 1 : ]:
+		filename, basename, _ = filebaseext( filename )
+		basenames.append( basename )
+		model = load( filename )
+		for k, v in model.items():
+			merged.setdefault( k, [] ).extend( v )
+	save( merged, '-'.join( basenames ) + '.model' )

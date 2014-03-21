@@ -1,3 +1,6 @@
 local
 data
 RISULTATI
+build
+dist
+markovdrummer.egg-info

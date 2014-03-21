@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env python
 
 # Copyright 2014 Massimo Santini, Raffaella Migliaccio
 #
@@ -17,6 +17,23 @@
 # You should have received a copy of the GNU General Public License
 # along with MarkovDrummer.  If not, see <http://www.gnu.org/licenses/>.
 
-basedir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+from sys import argv
 
-fluidsynth -g 3 -i "$basedir/local/fluidsynth/generaluser_gs_fluidsynth_v1.44.sf2" "$1" >/dev/null
+import midi
+
+from markovdrummer import filebaseext
+from markovdrummer.midi import quantize
+
+def main():
+
+	filename, basename, _ = filebaseext( argv[ 1 ] )
+ 	tick_per_quantum = int( argv[ 2 ] )
+
+	original = midi.read_midifile( filename )
+	qstats, qtrack = quantize( original[ 0 ], tick_per_quantum )
+
+	midi.write_midifile( '{}.q{}.mid'.format( basename, tick_per_quantum ), midi.Pattern( format = 0, resolution = original.resolution, tracks = [ qtrack ] ) )
+
+	print 'qstats:'
+	for delta, count in qstats:
+		print '\ttick {}: # {}'.format( delta, count )

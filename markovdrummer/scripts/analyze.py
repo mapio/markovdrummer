@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env python
 
 # Copyright 2014 Massimo Santini, Raffaella Migliaccio
 #
@@ -17,6 +17,24 @@
 # You should have received a copy of the GNU General Public License
 # along with MarkovDrummer.  If not, see <http://www.gnu.org/licenses/>.
 
-basedir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+from sys import argv
 
-fluidsynth -g 3 -i "$basedir/local/fluidsynth/generaluser_gs_fluidsynth_v1.44.sf2" "$1" >/dev/null
+import midi
+
+from markovdrummer import filebaseext
+from markovdrummer.markov import analyze, save
+from markovdrummer.midi import track2beats
+
+def main():
+
+	filename, basename, _ = filebaseext( argv[ 1 ] )
+	tick_per_quantum = int( argv[ 2 ] )
+	memory = int( argv[ 3 ] )
+
+	original = midi.read_midifile( filename )
+
+	beats = track2beats( original[ 0 ], tick_per_quantum )
+	model = analyze( beats, memory )
+
+	save( model, '{}.t{}-m{}.model'.format( basename, tick_per_quantum, memory ) )
+

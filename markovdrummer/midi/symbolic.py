@@ -1,3 +1,20 @@
+# Copyright 2014 Massimo Santini, Raffaella Migliaccio
+#
+# This file is part of MarkovDrummer.
+#
+# MarkovDrummer is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# MarkovDrummer is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with MarkovDrummer.  If not, see <http://www.gnu.org/licenses/>.
+
 from __future__ import absolute_import # to allow for import from midi (the external library)
 
 from pprint import PrettyPrinter; pp = PrettyPrinter( indent = 4 ).pprint
@@ -94,7 +111,7 @@ def beats2table( beats ):
 	for pitch in beats2pitches( beats ):
 		table.append( ''.join(
 				[ '<tr><th>' + pitch2part( pitch ) ]
-				+ [ '<td class=on>&nbsp;' if pitch in beat else '<td>&nbsp;' for beat in beats ]
+				+ [ '<td class=on>X' if pitch in beat else '<td>&nbsp;' for beat in beats ]
 		) )
 	table.append( '</table>' )
 	return '\n'.join( table )
@@ -108,8 +125,8 @@ def model2tables( model ):
 		for pitch in pitches:
 			table.append( ''.join(
 					[ '<tr><th>' + pitch2part( pitch ) ]
-					+ [ '<td class=on>&nbsp;' if pitch in beat else '<td>&nbsp;' for beat in ngram ]
-					+ [ '<td class=on>&nbsp;' if pitch in beat else '<td>&nbsp;' for beat in nexts ]
+					+ [ '<td class=on>X' if pitch in beat else '<td>&nbsp;' for beat in ngram ]
+					+ [ '<td class=on>X' if pitch in beat else '<td>&nbsp;' for beat in nexts ]
 			) )
 		table.append( '</table>' )
 		return '\n'.join( table )

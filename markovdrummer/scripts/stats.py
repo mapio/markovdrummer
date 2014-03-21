@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env python
 
 # Copyright 2014 Massimo Santini, Raffaella Migliaccio
 #
@@ -17,6 +17,27 @@
 # You should have received a copy of the GNU General Public License
 # along with MarkovDrummer.  If not, see <http://www.gnu.org/licenses/>.
 
-basedir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+from sys import argv
 
-fluidsynth -g 3 -i "$basedir/local/fluidsynth/generaluser_gs_fluidsynth_v1.44.sf2" "$1" >/dev/null
+import midi
+
+from markovdrummer.midi import quantize, trackstats, pitch2part
+
+def main():
+
+	filename = argv[ 1 ]
+
+	original = midi.read_midifile( filename )
+
+	print 'format: {}\nresolution: {}'.format( original.format, original.resolution )
+
+	for n, track in enumerate( original ):
+
+		qstats, _ = quantize( track )
+		print 'track #{} qstats:'.format( n )
+		for delta, count in qstats:
+			print '\ttick {}: # {}'.format( delta, count )
+
+		print 'track #{} pitches:'.format( n )
+		for pitch, count in trackstats( track ):
+			print '\tpitch {}: # {}'.format( pitch2part( pitch ), count )
