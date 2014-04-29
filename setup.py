@@ -48,6 +48,7 @@ setup(
         'console_scripts': [
             'analyze=markovdrummer.scripts.analyze:main',
             'draw=markovdrummer.scripts.draw:main',
+            'graph=markovdrummer.scripts.graph:main',
             'generate=markovdrummer.scripts.generate:main',
             'merge=markovdrummer.scripts.merge:main',
             'preprocess=markovdrummer.scripts.preprocess:main',
