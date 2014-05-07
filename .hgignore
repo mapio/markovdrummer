@@ -3,3 +3,5 @@ RISULTATI
 build
 dist
 markovdrummer.egg-info
+.model$
+.mid$
