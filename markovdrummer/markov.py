@@ -19,17 +19,19 @@ from pickle import loads, dumps
 from random import choice
 
 def analyze( lst, n = 2 ):
-	ngram = tuple( lst[:n] )
+	start = ngram = tuple( lst[:n] )
 	model = {}
 	for nxt in lst[n:]:
 		model.setdefault( ngram, [] ).append( nxt )
 		ngram = ngram[ 1 : ] + ( nxt, )
-	return model
+	return start, model
 
-def generate( model, num_beats ):
+def generate( model, num_beats, start = None ):
 	res = []
+	if start is None:
+		start = choice( list( model.keys() ) )
 	while True:
-		ngram = choice( list( model.keys() ) )
+		ngram = start
 		res.extend( ngram )
 		while ngram in model:
 			nxt = choice( model[ ngram ] )
@@ -40,5 +42,5 @@ def generate( model, num_beats ):
 def load( path ):
 	with open( path ) as f: return loads( f.read() )
 
-def save( model, path ):
-	with open( path, 'w' ) as f: f.write( dumps( model ) )
+def save( start_model, path ):
+	with open( path, 'w' ) as f: f.write( dumps( start_model ) )

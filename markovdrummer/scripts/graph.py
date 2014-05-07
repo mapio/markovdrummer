@@ -24,4 +24,5 @@ from markovdrummer.graph import draw
 
 def main():
 
-	draw( load( argv[ 1 ] ) )
+	_, model = load( argv[ 1 ] )
+	draw( model )

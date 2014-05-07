@@ -34,7 +34,7 @@ def main():
 	original = midi.read_midifile( filename )
 
 	beats = track2beats( original[ 0 ], tick_per_quantum )
-	model = analyze( beats, memory )
+	start_model = analyze( beats, memory )
 
-	save( model, '{}.t{}-m{}.model'.format( basename, tick_per_quantum, memory ) )
+	save( start_model, '{}.t{}-m{}.model'.format( basename, tick_per_quantum, memory ) )
 

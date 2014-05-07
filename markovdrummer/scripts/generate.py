@@ -32,8 +32,8 @@ def main():
 	tick_per_quantum = int( argv[ 3 ] )
 	resolution = int( argv[ 4 ] )
 
-	model = load( filename )
-	beats = generate( model, num_beats )
+	start, model = load( filename )
+	beats = generate( model, num_beats, start )
 	track = beats2track( beats, tick_per_quantum )
 
 	midi.write_midifile(

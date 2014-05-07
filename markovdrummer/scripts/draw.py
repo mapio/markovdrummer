@@ -37,5 +37,5 @@ def main():
 		print 'tick_per_quantum = {} '.format( tick_per_quantum )
 		writetables( [ beats2table( track2beats( track, tick_per_quantum ) ) ], basename + ext + '.html' )
 	elif ext == '.model':
-		model = load( filename )
+		_, model = load( filename )
 		writetables( model2tables( model ), basename + ext + '.html' )
