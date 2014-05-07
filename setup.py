@@ -47,6 +47,7 @@ setup(
     entry_points={
         'console_scripts': [
             'analyze=markovdrummer.scripts.analyze:main',
+            'analyze_text=markovdrummer.scripts.analyze_text:main',
             'draw=markovdrummer.scripts.draw:main',
             'graph=markovdrummer.scripts.graph:main',
             'generate=markovdrummer.scripts.generate:main',
