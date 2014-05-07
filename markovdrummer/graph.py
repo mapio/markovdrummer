@@ -33,8 +33,10 @@ def draw( model ):
 		GRAPH.new_edge( node( src ), node( dst ) )
 	GRAPH.clear()
 	for src, beats in model.items():
+		succ = src
 		for dst in beats:
-			edge( src, dst )
+			prec, succ = succ, succ[1:] + ( dst, )
+			edge( prec, succ )
 
 if __name__ == '__main__':
 	from sys import argv
