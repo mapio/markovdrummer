@@ -22,22 +22,29 @@ import xmlrpclib
 SERVER_URL = 'http://127.0.0.1:20738/RPC2'
 GRAPH = xmlrpclib.Server( SERVER_URL ).ubigraph
 
-def draw( model ):
+def _ts( tpl ):
+	return ''.join( map( str, tpl ) )
+
+def draw( model, decorated = False ):
 	name2node = {}
 	def node( beat ):
 	        if beat in name2node: return name2node[ beat ]
 	        v = GRAPH.new_vertex()
+	        if decorated: GRAPH.set_vertex_attribute( v, 'label', _ts( beat ) )
 	        name2node[ beat ] = v
 	        return v
-	def edge( src, dst ):
-		GRAPH.new_edge( node( src ), node( dst ) )
+	def edge( src, dst, step = None ):
+		e = GRAPH.new_edge( node( src ), node( dst ) )
+		if e > 0 and decorated: GRAPH.set_edge_attribute( e, 'label', _ts( step ) )
 	GRAPH.clear()
-	for src, beats in model.items():
-		succ = src
-		for dst in beats:
-			prec, succ = succ, succ[1:] + ( dst, )
-			edge( prec, succ )
+	GRAPH.set_vertex_style_attribute( 0, 'shape', 'sphere' )
+	GRAPH.set_vertex_style_attribute( 0, 'fontsize', '24' )
+	GRAPH.set_edge_style_attribute( 0, 'color', '#ffffff' )
+	GRAPH.set_edge_style_attribute( 0, 'width', '5.0' )
+	GRAPH.set_edge_style_attribute( 0, 'fontsize', '18' )
+	GRAPH.set_edge_style_attribute( 0, 'spline', 'true' )
 
-if __name__ == '__main__':
-	from sys import argv
-	from markovdrummer.markov import load
+	for src, beats in model.items():
+		for dst in beats:
+			edge( src, src[1:] + ( dst, ), dst )
+

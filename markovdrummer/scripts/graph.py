@@ -25,4 +25,4 @@ from markovdrummer.graph import draw
 def main():
 
 	_, model = load( argv[ 1 ] )
-	draw( model )
+	draw( model, len( argv ) > 2 )
